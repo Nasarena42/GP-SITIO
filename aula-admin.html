@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de carga — Aula Virtual</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="aula-guard.js"></script>
+<script>aulaProteger();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Saltar al contenido</a>
+<header class="site">
+  <nav class="nav">
+    <a class="logo" href="index.html"><img src="assets/grupopas-logo-positivo.png" alt="Grupo PAS"></a>
+    <div class="nav-links" id="navLinks">
+      <a href="aula-campus.html">Volver al campus</a>
+      <a class="active" href="aula-admin.html">Panel de carga</a>
+    </div>
+    <div class="nav-actions">
+      <button class="campus-salir" type="button" id="btnSalir" style="background:var(--navy-100); border-color:var(--border); color:var(--navy-900);">Cerrar sesión</button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+  <section class="campus-bar" style="padding:40px 0 34px;">
+    <div class="wrap campus-bar-inner">
+      <div>
+        <span class="eyebrow">Panel de carga</span>
+        <h1>Cargá clases sin tocar código</h1>
+        <p>Pegá el link de YouTube y el resto se completa desde acá.</p>
+      </div>
+      <div class="campus-side">
+        <div class="admin-cifras">
+          <div><strong id="cifraTotal">0</strong><span>clases</span></div>
+          <div><strong id="cifraCats">0</strong><span>categorías</span></div>
+          <div><strong id="cifraCambios">0</strong><span>cambios sin exportar</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="admin-aviso" role="note">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>
+      <div>
+        <strong>Esto es una maqueta.</strong> Lo que cargues queda guardado solo en este navegador, no en el sitio.
+        Para que los cambios lleguen al aula, usá <em>"Descargar aula-datos.js"</em> abajo de todo y subí ese archivo a GitHub.
+        <span class="admin-aviso-extra">Con el panel conectado a una base de datos, este paso desaparecería: cargás y ya está publicado.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="admin-pestanas" role="tablist">
+      <button type="button" class="admin-pestana is-active" data-panel="clases" role="tab" aria-selected="true">
+        Clases del aula <em id="pestClases">0</em>
+      </button>
+      <button type="button" class="admin-pestana" data-panel="charlas" role="tab" aria-selected="false">
+        Próximas charlas <em id="pestCharlas">0</em>
+      </button>
+    </div>
+  </div>
+
+  <section class="aula-seccion" style="padding-top:26px;">
+    <div class="wrap">
+      <div class="admin-grid" data-panel="clases">
+
+        <!-- Formulario -->
+        <div class="admin-form-col">
+          <div class="admin-card">
+            <h2 id="formTitulo">Agregar una clase</h2>
+
+            <form class="form" id="formClase" novalidate>
+
+              <div class="admin-tipos" role="group" aria-label="Tipo de contenido">
+                <button type="button" class="chip is-active" data-tipo="youtube">Video de YouTube</button>
+                <button type="button" class="chip" data-tipo="archivo">Video propio</button>
+                <button type="button" class="chip" data-tipo="material">PDF o Drive</button>
+              </div>
+
+              <div data-campo="youtube">
+                <label for="fLink">Link del video</label>
+                <input id="fLink" type="text" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off" spellcheck="false">
+                <p class="admin-ayuda" id="linkEstado">Pegá el link completo o solo el código del video.</p>
+              </div>
+
+              <div data-campo="archivo" hidden>
+                <label for="fArchivo">Ruta del archivo en el sitio</label>
+                <input id="fArchivo" type="text" placeholder="assets/video/mi-video.mp4" autocomplete="off" spellcheck="false">
+              </div>
+
+              <div data-campo="material" hidden>
+                <label for="fMaterial">Link al PDF o a la carpeta de Drive</label>
+                <input id="fMaterial" type="text" placeholder="https://drive.google.com/..." autocomplete="off" spellcheck="false">
+              </div>
+
+              <div class="admin-preview" id="preview" hidden>
+                <img id="previewImg" alt="">
+                <div>
+                  <span class="admin-preview-ok">Video encontrado</span>
+                  <code id="previewId"></code>
+                  <a id="previewLink" href="#" target="_blank" rel="noopener">Ver en YouTube ↗</a>
+                </div>
+              </div>
+
+              <div>
+                <label for="fTitulo">Título de la clase</label>
+                <input id="fTitulo" type="text" placeholder="Cómo cotizar en Polko" required>
+              </div>
+
+              <div>
+                <label for="fResumen">Resumen <span class="admin-opcional">(opcional)</span></label>
+                <textarea id="fResumen" rows="2" placeholder="Una o dos líneas explicando qué se lleva el PAS."></textarea>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label for="fCategoria">Categoría</label>
+                  <select id="fCategoria"></select>
+                </div>
+                <div>
+                  <label for="fDuracion">Duración <span class="admin-opcional">(opcional)</span></label>
+                  <input id="fDuracion" type="text" placeholder="12:30">
+                </div>
+              </div>
+
+              <label class="admin-check">
+                <input type="checkbox" id="fDestacado">
+                <span>Destacar: la clase aparece arriba de todo y más grande</span>
+              </label>
+
+              <div class="admin-acciones">
+                <button class="btn btn-primary" type="submit" id="btnGuardar">Agregar clase</button>
+                <button class="btn btn-ghost" type="button" id="btnCancelar" hidden>Cancelar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-card admin-card-suave">
+            <h3>Categorías</h3>
+            <p class="admin-ayuda">Podés crear una nueva sin tocar código.</p>
+            <div class="admin-cat-nueva">
+              <input id="fCatNueva" type="text" placeholder="Nombre de la categoría" aria-label="Nombre de la categoría nueva">
+              <button class="btn btn-primary" type="button" id="btnCatNueva">Crear</button>
+            </div>
+            <ul class="admin-cat-lista" id="listaCats"></ul>
+          </div>
+        </div>
+
+        <!-- Listado -->
+        <div class="admin-lista-col">
+          <div class="admin-card">
+            <div class="admin-lista-head">
+              <h2>Clases cargadas</h2>
+              <div class="aula-search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                <input type="search" id="buscadorAdmin" placeholder="Buscar…" aria-label="Buscar una clase">
+              </div>
+            </div>
+            <div class="aula-chips" id="filtrosAdmin" role="group" aria-label="Filtrar por categoría"></div>
+            <div class="admin-tabla" id="tabla"></div>
+            <p class="admin-vacio" id="tablaVacia" hidden>No hay clases que coincidan.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Panel de charlas -->
+      <div data-panel="charlas" hidden>
+
+        <div class="admin-importar">
+          <div class="admin-dropzone" id="dropCharlas">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 15l2 2 4-4"/></svg>
+            <strong>Arrastrá acá el Excel de charlas</strong>
+            <span>o hacé click para elegirlo — .xlsx o .csv</span>
+          </div>
+          <div class="admin-columnas">
+            <h3>Cómo tiene que estar armado el Excel</h3>
+            <p class="admin-ayuda">Una fila por charla. Los nombres de las columnas tienen que ser estos:</p>
+            <table class="admin-cols-tabla">
+              <tr><td><code>Fecha</code></td><td>2026-09-16</td></tr>
+              <tr><td><code>Hora</code></td><td>18:00</td></tr>
+              <tr><td><code>Duración</code></td><td>90 <em>(minutos)</em></td></tr>
+              <tr><td><code>Título</code></td><td>Taller de Formación — Agro</td></tr>
+              <tr><td><code>Disertante</code></td><td>Raúl Fraire</td></tr>
+              <tr><td><code>Rol</code></td><td>Grupo PAS</td></tr>
+              <tr><td><code>Organiza</code></td><td>grupopas <em>o</em> polko</td></tr>
+              <tr><td><code>Plataforma</code></td><td>Zoom, YouTube en vivo, Google Meet</td></tr>
+              <tr><td><code>Link</code></td><td>https://…</td></tr>
+              <tr><td><code>Resumen</code></td><td>Una o dos líneas</td></tr>
+              <tr><td><code>Cupo</code></td><td>200 <em>(opcional)</em></td></tr>
+            </table>
+            <a class="btn btn-ghost" href="#" id="btnPlantilla">Descargar plantilla de ejemplo</a>
+          </div>
+        </div>
+
+        <div class="admin-card" style="margin-top:24px;">
+          <div class="admin-lista-head">
+            <h2>Charlas cargadas</h2>
+            <button class="btn btn-primary" type="button" id="btnCharlaNueva" style="padding:11px 20px; font-size:.88rem;">+ Cargar una a mano</button>
+          </div>
+          <div class="admin-tabla" id="tablaCharlas"></div>
+        </div>
+
+      </div>
+
+      <!-- Exportar -->
+      <div class="admin-exportar" data-panel="clases">
+        <div>
+          <h3>Publicar los cambios</h3>
+          <p>Descargá el archivo y reemplazá <code>aula-datos.js</code> en GitHub. El aula queda actualizada.</p>
+        </div>
+        <div class="admin-exportar-btns">
+          <button class="btn btn-primary" type="button" id="btnDescargar">Descargar aula-datos.js</button>
+          <button class="btn btn-ghost" type="button" id="btnCopiar">Copiar al portapapeles</button>
+          <button class="btn btn-ghost" type="button" id="btnReset">Descartar cambios</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<div class="admin-toast" id="toast" hidden></div>
+
+<script src="aula-datos.js"></script>
+<script src="aula-charlas.js"></script>
+<script src="aula-admin.js"></script>
+<script src="aula-admin-charlas.js"></script>
+</body>
+</html>
